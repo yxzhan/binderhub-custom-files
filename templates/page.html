@@ -1,10 +1,12 @@
 {% extends "templates/page.html" %}
 
+{% block title %}IAI Binder{% endblock %}
+
 {% block logo %}
 <div class="container">
   <div class="row">
     <div id="logo-container">
-      <img id="logo" src="{{static_url("logo.svg")}}" width="180px" alt="logo" />
+      <a href="/"><img id="logo" src="{{static_url("logo.svg")}}" width="330px" alt="logo" /></a>
       <a href="https://ai.uni-bremen.de/" target="_blank"><img id="logo-iai" src="https://intel4coro.ai.uni-bremen.de/assets/img/clients/iai.png" width="180px" alt="iai logo" /></a>
     </div>
   </div>
