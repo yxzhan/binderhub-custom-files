@@ -1,3 +1,12 @@
 {% extends "templates/page.html" %}
 
-{% block logo_image %}"{{ EXTRA_STATIC_URL_PREFIX }}custom_logo.svg"{% endblock logo_image %}
+{% block logo %}
+<div class="container">
+  <div class="row">
+    <div id="logo-container">
+      <img id="logo" src="{{static_url("logo.svg")}}" width="180px" alt="logo" />
+      <a href="https://ai.uni-bremen.de/" target="_blank"><img id="logo-iai" src="https://intel4coro.ai.uni-bremen.de/assets/img/clients/iai.png" width="180px" alt="iai logo" /></a>
+    </div>
+  </div>
+</div>
+{% endblock logo %}
