@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <title>{% block title %}IAI Binder{% endblock %}</title>
@@ -14,10 +15,31 @@
   <meta name="twitter:card" content="summary_large_image">
   {% endblock meta_social %}
   {% block head %}
-  <link id="favicon" rel="shortcut icon" type="image/png" href="{{static_url("favicon.ico")}}" />
-  <link href="{{static_url("dist/styles.css")}}" rel="stylesheet"></link>
+  <link id="favicon" rel="shortcut icon" type="image/png" href="{{static_url(" favicon.ico")}}" />
+  <link href="{{static_url(" dist/styles.css")}}" rel="stylesheet">
+  </link>
+  <script>
+    const BUILTLISTURL = {
+      '10.0.0.100': 'http://192.168.102.13:9091/',
+      'binder.intel4coro.de': 'https://built-list.intel4coro.de/'
+    }[location.host]
+    async function _requestFunc(url = '', method = 'GET', data) {
+      const params = {
+        method: method, // *GET, POST, PUT, DELETE, etc.
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+      if (method !== 'GET' && data) {
+        params.body = JSON.stringify(data);
+      }
+      const response = await fetch(url, params);
+      return response.json();
+    }
+  </script>
   {% endblock head %}
 </head>
+
 <body>
   {% block body %}
 
@@ -31,8 +53,9 @@
   <div class="container">
     <div class="row">
       <div id="logo-container">
-        <a href="/"><img id="logo" src="{{static_url("logo.svg")}}" width="330px" alt="logo" /></a>
-        <a href="https://ai.uni-bremen.de/" target="_blank"><img id="logo-iai" src="https://intel4coro.ai.uni-bremen.de/assets/img/clients/iai.png" width="180px" alt="iai logo" /></a>
+        <a href="/"><img id="logo" src="{{static_url(" logo.svg")}}" width="330px" alt="logo" /></a>
+        <a href="https://ai.uni-bremen.de/" target="_blank"><img id="logo-iai"
+            src="https://intel4coro.ai.uni-bremen.de/assets/img/clients/iai.png" width="180px" alt="iai logo" /></a>
       </div>
     </div>
   </div>
@@ -44,7 +67,9 @@
   {% block footer %}
   <div class="container">
     <div class="row text-center">
-      <h3>questions?<br />join the <a href="https://discourse.jupyter.org/c/binder">discussion</a>, read the <a href="https://mybinder.readthedocs.io/en/latest/">docs</a>, see the <a href="https://github.com/jupyterhub/binderhub">code</a></h3>
+      <h3>questions?<br />join the <a href="https://discourse.jupyter.org/c/binder">discussion</a>, read the <a
+          href="https://mybinder.readthedocs.io/en/latest/">docs</a>, see the <a
+          href="https://github.com/jupyterhub/binderhub">code</a></h3>
     </div>
   </div>
   {% endblock footer %}
@@ -55,27 +80,30 @@
     if (navigator.doNotTrack != "1" && // Most Firefox & Chrome
       window.doNotTrack != "1" && // IE & Safari
       navigator.msDoNotTrack != "1" // Old IE
-  ) {
-    console.log("Loading Google Analytics, since Do Not Track is off");
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    ) {
+      console.log("Loading Google Analytics, since Do Not Track is off");
+      (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+          (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+          m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+      })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
-    ga('create', '{{ google_analytics_code }}', '{{ google_analytics_domain }}',
-      {'storage': 'none'});
-    ga('set', 'anonymizeIp', true);
-    ga('send', 'pageview');
-  }
+      ga('create', '{{ google_analytics_code }}', '{{ google_analytics_domain }}',
+        { 'storage': 'none' });
+      ga('set', 'anonymizeIp', true);
+      ga('send', 'pageview');
+    }
   </script>
   {% endif %}
   {% if extra_footer_scripts %}
   {% for script in extra_footer_scripts|dictsort %}
   <script>
-    {{ script[1]|safe }}
+    { { script[1] | safe } }
   </script>
   {% endfor %}
   {% endif %}
   {% endblock body %}
 </body>
+
 </html>
