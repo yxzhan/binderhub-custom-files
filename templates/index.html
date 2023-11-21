@@ -3,7 +3,7 @@
 {% block head %}
 <meta id="base-url" data-url="{{base_url}}">
 <meta id="badge-base-url" data-url="{{badge_base_url}}">
-<script src="{{static_url(" dist/bundle.js")}}"></script>
+<script src="{{static_url("dist/bundle.js")}}"></script>
 {{ super() }}
 {% endblock head %}
 
@@ -92,7 +92,7 @@
           <div class="url-row">
             <pre id="basic-url-snippet"
               data-default="Fill in the fields to see a URL for sharing your Binder.">Fill in the fields to see a URL for sharing your Binder.</pre>
-            <img class="icon clipboard" src="{{static_url(" images/copy-icon-black.svg")}}"
+            <img class="icon clipboard" src="{{static_url("images/copy-icon-black.svg")}}"
               data-clipboard-target="#basic-url-snippet" alt="Copy to clipboard">
           </div>
         </div>
@@ -100,7 +100,7 @@
         <div class="badges row">
           <div class="dropdownmenu" id="toggle-badge-snippet">
             <label>Expand to see the text below, paste it into your README to show a binder badge: <img id="badge"
-                src="{{static_url(" images/badge_logo.svg")}}" alt="Binder badge logo"></label>
+                src="{{static_url("images/badge_logo.svg")}}" alt="Binder badge logo"></label>
             <a id="badge-link"></a>
             <a href="#" title="show badge snippets"><span id="badge-snippet-caret"
                 class="glyphicon glyphicon-triangle-right"></span></a>
@@ -110,15 +110,15 @@
             <div class="badge-snippet-row">
               <pre id="markdown-badge-snippet"
                 data-default="Fill in the fields to see the markdown badge snippet."></pre>
-              <img class="icon" src="{{static_url(" images/markdown-icon.svg")}}" alt="Markdown icon">
-              <img class="icon clipboard" src="{{static_url(" images/copy-icon-black.svg")}}"
+              <img class="icon" src="{{static_url("images/markdown-icon.svg")}}" alt="Markdown icon">
+              <img class="icon clipboard" src="{{static_url("images/copy-icon-black.svg")}}"
                 data-clipboard-target="#markdown-badge-snippet" alt="Copy markdown link to clipboard">
             </div>
             <!--RST section-->
             <div class="badge-snippet-row">
               <pre id="rst-badge-snippet" data-default="Fill in the fields to see the rST badge snippet."></pre>
-              <img class="icon" src="{{static_url(" images/rst-icon.svg")}}" alt="restructured text icon">
-              <img class="icon clipboard" src="{{static_url(" images/copy-icon-black.svg")}}"
+              <img class="icon" src="{{static_url("images/rst-icon.svg")}}" alt="restructured text icon">
+              <img class="icon clipboard" src="{{static_url("images/copy-icon-black.svg")}}"
                 data-clipboard-target="#rst-badge-snippet" alt="Copy rst link to clipboard">
             </div>
           </div>
