@@ -13,11 +13,9 @@
     <div class="col-lg-10 col-lg-offset-1">
       {% block header %}
       <div id="header" class="text-center">
-        <h1>Turn a Git repo into a interactive robot simulation environment</h1>
+        <h1>Turn a Git repo into a collection of interactive notebooks</h1>
         <div id="explanation">
-          This Binder is deployed for Robotics research.
-          Share your findings, get insights on ongoing and planned research projects and find out about training and networking opportunities.
-          Launch cloud-based robotics research environments with Binder, making your research projects immediately reproducible by anyone, anywhere.
+          Have a repository full of Jupyter notebooks? With Binder, open those notebooks in an executable environment, making your code immediately reproducible by anyone, anywhere.
         </div>
       </div>
       <div id="tutorials" class="text-center">
@@ -28,7 +26,7 @@
       {% block form %}
       <form id="build-form" class="form jumbotron">
         <h4 id="form-header" class='row'>Build and launch a repository</h4>
-        <input type="hidden" id="provider_prefix" value="{{repo_providers.keys() | list | first}}"/>
+        <input type="hidden" id="provider_prefix" value="{{repo_providers.keys() | list | first}}"/> 
         <div class="form-group row">
           <label for="repository">{{(repo_providers.values() | list | first).labels.text}}</label>
           <div class="input-group">
@@ -199,10 +197,77 @@
 {% block footer %}
 {{ super () }}
 <script type="text/javascript">
+indexMain();
+</script>
+{% endblock footer %}
+root@binder-746b57c4bb-xg8ms:/usr/local/lib/python3.11/site-packages/binderhub/templates# cat 
+about.html    error.html    index.html    loading.html  page.html     
+root@binder-746b57c4bb-xg8ms:/usr/local/lib/python3.11/site-packages/binderhub/templates# cat loading.html 
+{% extends "page.html" %}
+
+{% block meta_social %}
+<meta property="og:title" content="{{social_desc}}">
+<meta property="og:image" content="https://mybinder.org/static/images/logo_square.png">
+<meta property="og:description" content="Click to run this interactive environment. From the Binder Project: Reproducible, sharable, interactive computing environments.">
+<meta property="og:image:width" content="217">
+<meta property="og:image:height" content="217">
+<meta property="og:image:alt" content="The Binder Project Logo" />
+<meta name="twitter:card" content="summary" />
+{% endblock meta_social %}
+
+{% block head %}
+<meta id="base-url" data-url="{{base_url}}">
+<meta id="badge-base-url" data-url="{{badge_base_url}}">
+<meta id="build-token" data-token="{{ build_token }}">
+{{ super() }}
+<script src="{{static_url("dist/bundle.js")}}"></script>
+<link href="{{static_url("loading.css")}}" rel="stylesheet">
+{% endblock head %}
+
+{% block main %}
+<div id="loader"></div>
+<div id="loader-text">
+  <p class="launching">Launching your Binder...</p>
+</div>
+<div id="loader-links">
+  <p class="text-center">New to Binder? Check out the <a target="_blank" href="https://mybinder.readthedocs.io/en/latest/">Binder Documentation</a> for more information</p>
+</div>
+
+<div id="log-container" class="panel panel-default on-build hidden row">
+  <div id="toggle-logs" class="panel-heading">
+    Build logs
+    <button type="button" class="btn btn-link btn-xs pull-right toggle">show</button>
+    <a id="view-raw-logs" class="btn btn-link btn-xs pull-right" target="_blank">view raw</a>
+  </div>
+  <div class="panel-body hidden">
+    <div id="log"></div>
+  </div>
+</div>
+
+{% block preview %}
+{% if nbviewer_url %}
+<div class="preview container">
+<p class="preview-text text-center">
+Here's a non-interactive preview on
+<a target="_blank" href="https://nbviewer.jupyter.org">nbviewer</a>
+while we start a server for you.
+Your binder will open automatically when it is ready.
+</p>
+<div id="nbviewer-preview">
+  <iframe src="{{ nbviewer_url }}"></iframe>
+</div>
+</div>
+{% endif %}
+{% endblock preview %}
+
+{% endblock main %}
+
+{% block footer %}
+<script type="text/javascript">
 document.addEventListener("DOMContentLoaded", async () => {
-  await indexMain();
+  await loadingMain("{{provider_spec}}");
 })
-console.log('custom index.html loaded');
+console.log('custom loading.html loaded');
 
 </script>
 {% endblock footer %}
