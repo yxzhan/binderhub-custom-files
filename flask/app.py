@@ -2,8 +2,10 @@ from flask import Flask, jsonify, request
 from urllib.parse import unquote, urlparse
 from time import time
 import os
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app, origins=['http://10.0.0.100', 'https://binder.intel4coro.de'])
 
 # Initialize an empty list
 built_repo_list = []
@@ -43,7 +45,8 @@ def update_built_list(data):
         'repo_name': repo_name,
         'repo_ref': repo_ref,
         'timestamp': time(),
-        'binder': f"/{providerSpec}?{data['pathType']}url={data['path']}"
+        # 'binder': f"/{providerSpec}?{data['pathType']}url={data['path']}"
+        'binder': f"/{providerSpec}"
     }
     
     previous_built = find_dict_by_id( data['providerSpec'], built_repo_list)
@@ -59,12 +62,6 @@ def find_dict_by_id(id_to_find, d_list):
         if item.get('id') == id_to_find:
             return item
     return None  # Return None if id is not found
-
-# Custom function to add the Access-Control-Allow-Origin header
-def add_cors_headers(response):
-    response.headers['Access-Control-Allow-Origin'] = 'https://binder.intel4coro.de/'
-    return response
-
 
 # Endpoint to insert a string into the list
 @app.route('/', methods=['POST'])
@@ -83,13 +80,6 @@ def post_request():
 @app.route('/', methods=['GET'])
 def get_request():
     return get_repo_list()
-
-
-# Register the function to add CORS headers after each request
-@app.after_request
-def after_request(response):
-    return add_cors_headers(response)
-
 
 if __name__ == '__main__':
     flask_port = os.getenv('FLASK_PORT')

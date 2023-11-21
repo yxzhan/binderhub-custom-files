@@ -7,6 +7,8 @@ services:
     # (default stop signal from Compose is SIGTERM)
     stop_signal: SIGINT
     env_file: .env
+    volumes:
+      - ./:/app
     ports:
       - '${FLASK_PORT}:${FLASK_PORT}'
       # - '127.0.0.1:${FLASK_PORT}:${FLASK_PORT}'
