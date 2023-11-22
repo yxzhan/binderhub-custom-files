@@ -15,7 +15,7 @@ def save_list_to_file():
     print(built_repo_list)
     
 def get_repo_list():
-    return jsonify(sorted(built_repo_list, key=lambda x:x["timestamp"], reverse=True))
+    return jsonify(sorted(built_repo_list, key=lambda x:x["timestamp"], reverse=True)[:20])
 
 def update_built_list(data):
     providerSpec = data['providerSpec']
@@ -45,7 +45,7 @@ def update_built_list(data):
         'repo_name': repo_name,
         'repo_ref': repo_ref,
         'timestamp': time(),
-        'binder': f"/{providerSpec}" + f"?{data['pathType']}url={data['path']}" if data['pathType'] else ''
+        'binder': f"/{providerSpec}" + f"?{data['pathType']}path={data['path']}" if data['pathType'] else ''
     }
     
     previous_built = find_dict_by_id( data['providerSpec'], built_repo_list)

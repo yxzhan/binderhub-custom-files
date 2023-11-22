@@ -19,39 +19,72 @@
   <link href="{{static_url("dist/styles.css")}}" rel="stylesheet">
   </link>
   <script>
-    const BUILTLISTURL = {
+    const BUILTLISTAPI = {
       '10.0.0.100': 'http://192.168.102.13:9091/built-repo',
       'binder.intel4coro.de': 'https://built-repos.intel4coro.de/built-repo'
     }[location.host]
 
     function _renderBuiltRepos(data) {
       const containerDiv = document.getElementById("builtRepos")
-      if (!containerDiv) {
-        return
+      if (!containerDiv) return
+      if (data.length === 0) {
+        containerDiv.innerHTML = '<div class="text-center">No built repos yet</div>';
+        return false;
       }
-      const _list = data.map(v => {
+      containerDiv.innerHTML += data.map(v => {
         return `
-        <div class="card">
-          <a target="_blank" href="${v.repo_url}"><h3>${v.repo_author}/${v.repo_name}/${v.repo_ref}</h3></a>
-          <a target="_blank" href="/v2${v.binder}">Launch</a>
+        <div class="jumbotron" style="padding: 0 20px; display: flex;justify-content: space-between;align-items: center;">
+          <a target="_blank" href="${v.repo_url}"><h4>${v.repo_author}/${v.repo_name}/${v.repo_ref}</h4></a>
+          <a class="btn btn-submit" target="_blank" href="/v2${v.binder}">Launch</a>
         </div>
         `
-      })
-      containerDiv.innerHTML += _list.join('');
+      }).join('');
+      return false;
+    }
+
+    async function postNewBuiltRepos (url) {
+      const urlObj = new URL(url);
+      const params = urlObj.searchParams;
+      const providerPpec = urlObj.path;
+      let pathType, path;
+      path = params.get("urlpath");
+      if (path) {
+        pathType = "url";
+      } else {
+        path = params.get("labpath");
+        if (path) {
+          pathType = "lab";
+        } else {
+          path = params.get("filepath");
+          if (path) {
+            pathType = "file";
+          }
+        }
+      }
+      return await _requestFunc(BUILTLISTAPI, 'POST', {
+        providerSpec: providerSpec,
+        path: path,
+        pathType: pathType,
+      });
     }
 
     async function _requestFunc(url = '', method = 'GET', data) {
-      const params = {
-        method: method, // *GET, POST, PUT, DELETE, etc.
-        headers: {
-          'Content-Type': 'application/json'
+      try {
+        const params = {
+          method: method, // *GET, POST, PUT, DELETE, etc.
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
+        if (method !== 'GET' && data) {
+          params.body = JSON.stringify(data);
+        }
+        const response = await fetch(url, params);
+        return response.json();
       }
-      if (method !== 'GET' && data) {
-        params.body = JSON.stringify(data);
+      catch (error) {
+        console.error('Error:', error);
       }
-      const response = await fetch(url, params);
-      return response.json();
     }
   </script>
   {% endblock head %}

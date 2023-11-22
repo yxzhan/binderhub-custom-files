@@ -57,27 +57,24 @@
 {% endif %}
 {% endblock preview %}
 
+<div class="row">
+  <div class="col-lg-10 col-lg-offset-1">
+    <h3 class="text-center">Recent Launched Repositories</h3>
+    <div id="builtRepos"></div>
+  </div>
+</div>
+
 {% endblock main %}
 
 {% block footer %}
 <script type="text/javascript">
   document.addEventListener("DOMContentLoaded", async () => {
     await loadingMain("{{provider_spec}}");
-    // try {
-    //   await _requestFunc(BUILTLISTURL, 'POST', {
-    //     providerSpec: "{{provider_spec}}",
-    //     path: '',
-    //     pathType: '',
-    //   });
-    // } catch (error) {
-    //   console.error('Error:', error);
-    // }
-    try {
-      const response = await _requestFunc(BUILTLISTURL, 'GET');
-      _renderBuiltRepos(response);
-    } catch (error) {
-      console.error('Error:', error);
-    }
+    // get built repos
+    const response = await _requestFunc(BUILTLISTAPI, 'GET');
+    _renderBuiltRepos(response.filter(v => v.id === "{{provider_spec}}"));
+    // post a new built repo
+    await postNewBuiltRepos(location.href)
   })
 </script>
 {% endblock footer %}

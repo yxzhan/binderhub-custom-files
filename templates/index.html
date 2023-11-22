@@ -165,7 +165,12 @@
       {% endblock form %}
     </div>
   </div>
-  <div id="builtRepos"></div>
+  <div class="row">
+    <div class="col-lg-10 col-lg-offset-1">
+      <h3 class="text-center">Recent Launched Repositories</h3>
+      <div id="builtRepos"></div>
+    </div>
+  </div>
 
   {% block how_it_works %}
   <div id="how-it-works">
@@ -215,14 +220,28 @@
 {% block footer %}
 {{ super () }}
 <script type="text/javascript">
+  function isURL(str) {
+    const urlPattern = new RegExp(
+      '^(https?:\\/\\/)?' + // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR IP (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%@_.~+&:]*)*' + // port and path
+      '(\\?[;&a-z\\d%@_.,~+&:=-]*)?' + // query string
+      '(\\#[-a-z\\d_]*)?$',
+      'i'
+    );
+    return urlPattern.test(str);
+  }
   document.addEventListener("DOMContentLoaded", async () => {
     await indexMain();
-    try {
-      const response = await _requestFunc(BUILTLISTURL, 'GET');
-      _renderBuiltRepos(response);
-    } catch (error) {
-      console.error('Error:', error);
-    }
+    const response = await _requestFunc(BUILTLISTAPI, 'GET');
+    _renderBuiltRepos(response);
+    document.getElementById("submit").addEventListener("click", async (e) => {
+      e.preventDefault();
+      const url = document.getElementById("basic-url-snippet").innerText
+      if (!isURL(url)) return false;
+      await postNewBuiltRepos(url);
+    })
   })
 </script>
 {% endblock footer %}
