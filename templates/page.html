@@ -18,6 +18,17 @@
   <link id="favicon" rel="shortcut icon" type="image/png" href="{{static_url("favicon.ico")}}" />
   <link href="{{static_url("dist/styles.css")}}" rel="stylesheet">
   </link>
+  <style>
+    #builtRepos .jumbotron{
+      padding: 1rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #builtRepos .jumbotron .btn{
+      width: 130px;
+    }
+  </style>
   <script>
     const BUILTLISTAPI = {
       '10.0.0.100': 'http://192.168.102.13:9091/built-repo',
@@ -33,7 +44,7 @@
       }
       containerDiv.innerHTML += data.map(v => {
         return `
-        <div class="jumbotron" style="padding: 0 20px; display: flex;justify-content: space-between;align-items: center;">
+        <div class="jumbotron">
           <a target="_blank" href="${v.repo_url}"><h4>${v.repo_author}/${v.repo_name}/${v.repo_ref}</h4></a>
           <a class="btn btn-submit" target="_blank" href="/v2${v.binder}">Launch</a>
         </div>
