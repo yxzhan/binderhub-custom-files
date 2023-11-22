@@ -238,10 +238,10 @@
       const response = await _requestFunc(BUILTLISTAPI, 'GET');
       _renderBuiltRepos(response);
       document.getElementById("submit").addEventListener("click", async (e) => {
-        e.preventDefault();
         const url = document.getElementById("basic-url-snippet").innerText
-        if (!isURL(url)) return false;
+        if (!isURL(url)) return true;
         await postNewBuiltRepos(url);
+        return true
       })
     } catch (error) {
       console.error('Error:', error);

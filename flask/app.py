@@ -18,12 +18,14 @@ def get_repo_list():
     return jsonify(sorted(built_repo_list, key=lambda x:x["timestamp"], reverse=True)[:20])
 
 def update_built_list(data):
-    providerSpec = data['providerSpec']
+    providerSpec = data.get('providerSpec')
     repo_base_url = ''
     repo_url = ''
     repo_author = ''
     repo_name = ''
     repo_ref = ''
+    repo_launch_path = data.get('path')
+    repo_launch_type = data.get('pathType')
     components = providerSpec.strip('/').split('/')
     if components[0] == 'gh':
         repo_base_url = 'https://github.com'
@@ -45,7 +47,7 @@ def update_built_list(data):
         'repo_name': repo_name,
         'repo_ref': repo_ref,
         'timestamp': time(),
-        'binder': f"/{providerSpec}" + f"?{data['pathType']}path={data['path']}" if data['pathType'] else ''
+        'binder': f"/{providerSpec}" + f"?{repo_launch_type}path={repo_launch_path}" if repo_launch_type else ''
     }
     
     previous_built = find_dict_by_id( data['providerSpec'], built_repo_list)

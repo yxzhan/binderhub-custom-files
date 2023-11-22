@@ -57,7 +57,7 @@
       const urlObj = new URL(url);
       const params = urlObj.searchParams;
       let providerSpec = urlObj.pathname.split('/');
-      providerSpec.slice(0, 2);
+      providerSpec.splice(0, 2);
       providerSpec = providerSpec.join('/');
       let pathType, path;
       path = params.get("urlpath");
@@ -76,8 +76,8 @@
       }
       return await _requestFunc(BUILTLISTAPI, 'POST', {
         providerSpec: providerSpec,
-        path: path,
-        pathType: pathType,
+        path: path || '',
+        pathType: pathType || '',
       });
     }
 
