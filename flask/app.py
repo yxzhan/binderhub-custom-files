@@ -45,8 +45,7 @@ def update_built_list(data):
         'repo_name': repo_name,
         'repo_ref': repo_ref,
         'timestamp': time(),
-        # 'binder': f"/{providerSpec}?{data['pathType']}url={data['path']}"
-        'binder': f"/{providerSpec}"
+        'binder': f"/{providerSpec}" + f"?{data['pathType']}url={data['path']}" if data['pathType'] else ''
     }
     
     previous_built = find_dict_by_id( data['providerSpec'], built_repo_list)
@@ -64,7 +63,7 @@ def find_dict_by_id(id_to_find, d_list):
     return None  # Return None if id is not found
 
 # Endpoint to insert a string into the list
-@app.route('/', methods=['POST'])
+@app.route('/built-repo', methods=['POST'])
 def post_request():
     data = request.json
     if 'providerSpec' not in data:
@@ -77,7 +76,7 @@ def post_request():
         return jsonify({'error': 'Internal Server Error!'}), 500
 
 # Endpoint to get the values of the list
-@app.route('/', methods=['GET'])
+@app.route('/built-repo', methods=['GET'])
 def get_request():
     return get_repo_list()
 

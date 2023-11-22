@@ -215,19 +215,6 @@
 {% block footer %}
 {{ super () }}
 <script type="text/javascript">
-  function _renderBuiltRepos(data) {
-    console.log('Server response:', data);
-
-    const containerDiv = $("#builtRepos")
-    const _list = data.map(v => {
-      return `
-      <div>
-        <a target="_blank" href="${v.repo_url}"><h3>${v.repo_author}/${v.repo_name}/${v.repo_ref}</h3></a>
-        <a target="_blank" href="/v2${v.binder}">Launch</a>
-      </div>
-      `
-    })
-  }
   document.addEventListener("DOMContentLoaded", async () => {
     await indexMain();
     try {

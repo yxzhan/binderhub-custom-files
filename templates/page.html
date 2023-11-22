@@ -20,9 +20,26 @@
   </link>
   <script>
     const BUILTLISTURL = {
-      '10.0.0.100': 'http://192.168.102.13:9091/',
-      'binder.intel4coro.de': 'https://built-repos.intel4coro.de/'
+      '10.0.0.100': 'http://192.168.102.13:9091/built-repo',
+      'binder.intel4coro.de': 'https://built-repos.intel4coro.de/built-repo'
     }[location.host]
+
+    function _renderBuiltRepos(data) {
+      const containerDiv = document.getElementById("builtRepos")
+      if (!containerDiv) {
+        return
+      }
+      const _list = data.map(v => {
+        return `
+        <div class="card">
+          <a target="_blank" href="${v.repo_url}"><h3>${v.repo_author}/${v.repo_name}/${v.repo_ref}</h3></a>
+          <a target="_blank" href="/v2${v.binder}">Launch</a>
+        </div>
+        `
+      })
+      containerDiv.innerHTML += _list.join('');
+    }
+
     async function _requestFunc(url = '', method = 'GET', data) {
       const params = {
         method: method, // *GET, POST, PUT, DELETE, etc.
