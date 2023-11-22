@@ -56,7 +56,9 @@
     async function postNewBuiltRepos (url) {
       const urlObj = new URL(url);
       const params = urlObj.searchParams;
-      const providerPpec = urlObj.path;
+      let providerPpec = urlObj.pathname.split('/');
+      providerPpec.slice(0, 2);
+      providerPpec = providerPpec.join('/');
       let pathType, path;
       path = params.get("urlpath");
       if (path) {

@@ -167,7 +167,7 @@
   </div>
   <div class="row">
     <div class="col-lg-10 col-lg-offset-1">
-      <h3 class="text-center">Recent Launched Repositories</h3>
+      <h3 class="text-center">Recent Built Repositories</h3>
       <div id="builtRepos"></div>
     </div>
   </div>
@@ -234,14 +234,18 @@
   }
   document.addEventListener("DOMContentLoaded", async () => {
     await indexMain();
-    const response = await _requestFunc(BUILTLISTAPI, 'GET');
-    _renderBuiltRepos(response);
-    document.getElementById("submit").addEventListener("click", async (e) => {
-      e.preventDefault();
-      const url = document.getElementById("basic-url-snippet").innerText
-      if (!isURL(url)) return false;
-      await postNewBuiltRepos(url);
-    })
+    try {
+      const response = await _requestFunc(BUILTLISTAPI, 'GET');
+      _renderBuiltRepos(response);
+      document.getElementById("submit").addEventListener("click", async (e) => {
+        e.preventDefault();
+        const url = document.getElementById("basic-url-snippet").innerText
+        if (!isURL(url)) return false;
+        await postNewBuiltRepos(url);
+      })
+    } catch (error) {
+      console.error('Error:', error);
+    }
   })
 </script>
 {% endblock footer %}

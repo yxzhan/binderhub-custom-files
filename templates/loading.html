@@ -57,12 +57,12 @@
 {% endif %}
 {% endblock preview %}
 
-<div class="row">
-  <div class="col-lg-10 col-lg-offset-1">
-    <h3 class="text-center">Other Repositories</h3>
-    <a target="_blank" href="/"><h4>Launch a new Repository</h4></a>
-    <div id="builtRepos"></div>
+<div style="width:80%;">
+  <h3 class="text-center">Other Repositories</h3>
+  <div style="text-align: right; margin-bottom: 30px;">
+    <a style="width: 200px;" class="btn btn-submit" target="_blank" href="/"><h4>Launch a new Repository</h4></a>
   </div>
+  <div id="builtRepos"></div>
 </div>
 
 {% endblock main %}
@@ -72,10 +72,14 @@
   document.addEventListener("DOMContentLoaded", async () => {
     await loadingMain("{{provider_spec}}");
     // get built repos
-    const response = await _requestFunc(BUILTLISTAPI, 'GET');
-    _renderBuiltRepos(response.filter(v => v.id !== "{{provider_spec}}"));
-    // post a new built repo
-    await postNewBuiltRepos(location.href)
+    try {
+      const response = await _requestFunc(BUILTLISTAPI, 'GET');
+      _renderBuiltRepos(response.filter(v => v.id !== "{{provider_spec}}"));
+      // post a new built repo
+      await postNewBuiltRepos(location.href)
+    } catch (error) {
+      console.error('Error:', error);
+    }
   })
 </script>
 {% endblock footer %}
