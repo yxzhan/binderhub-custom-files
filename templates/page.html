@@ -19,6 +19,11 @@
   <link href="{{static_url("dist/styles.css")}}" rel="stylesheet">
   </link>
   <style>
+    #builtRepos {
+      max-height: 650px;
+      overflow: auto;
+      padding: 2rem;
+    }
     #builtRepos .jumbotron{
       padding: 1rem 3rem;
       display: flex;
@@ -45,7 +50,9 @@
       containerDiv.innerHTML += data.map(v => {
         return `
         <div class="jumbotron">
-          <a target="_blank" href="${v.repo_url}"><h4>${v.repo_author}/${v.repo_name}/${v.repo_ref}</h4></a>
+          <a target="_blank" href="${v.repo_url}">
+            <h4>${v.repo_author}/${v.repo_name}/${v.repo_ref}</h4>
+          </a>
           <a class="btn btn-submit" target="_blank" href="/v2${v.binder}">Launch</a>
         </div>
         `
