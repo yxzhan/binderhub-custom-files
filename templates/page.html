@@ -144,7 +144,7 @@
   </div>
   {% endblock footer %}
 
-  {% if google_analytics_code %}
+  <!-- {% if google_analytics_code %}
   <script>
     // Only load GA if DNT is not set
     if (navigator.doNotTrack != "1" && // Most Firefox & Chrome
@@ -165,7 +165,7 @@
       ga('send', 'pageview');
     }
   </script>
-  {% endif %}
+  {% endif %} -->
   {% if extra_footer_scripts %}
   {% for script in extra_footer_scripts|dictsort %}
   <script>

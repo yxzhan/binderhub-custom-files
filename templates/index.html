@@ -22,7 +22,7 @@
       <div id="tutorials" class="text-center" style="font-size: 2rem;">
         <h2 >New to Binder? Get started with a <a
             href="https://vib.ai.uni-bremen.de/page/softwaretools/cloud-based-robotics-platform#zero-to-binder"
-            target="_blank">Zero-to-Binder tutorial</a>.</h2>
+            target="_blank">Zero-to-Binder tutorial</a> in Robotics.</h2>
       </div>
       {% endblock header %}
 
@@ -233,10 +233,16 @@
     return urlPattern.test(str);
   }
   document.addEventListener("DOMContentLoaded", async () => {
-    await indexMain();
     try {
       const response = await _requestFunc(BUILTLISTAPI, 'GET');
       _renderBuiltRepos(response);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  })
+  document.addEventListener("DOMContentLoaded", async () => {
+    await indexMain();
+    try {
       document.getElementById("submit").addEventListener("click", async (e) => {
         const url = document.getElementById("basic-url-snippet").innerText
         if (!isURL(url)) return true;

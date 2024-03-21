@@ -71,6 +71,8 @@
 <script type="text/javascript">
   document.addEventListener("DOMContentLoaded", async () => {
     await loadingMain("{{provider_spec}}");
+  })
+  document.addEventListener("DOMContentLoaded", async () => {
     // get built repos
     try {
       const response = await _requestFunc(BUILTLISTAPI, 'GET');
