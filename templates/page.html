@@ -36,14 +36,14 @@
   </style>
   <script>
     const BUILTLISTAPI = {
-      'http': 'http://192.168.102.13:9091/built-repo',
-      'https': 'https://test.intel4coro.de/built-repo'
+      'http:': 'http://192.168.102.13:9091/built-repo',
+      'https:': 'https://test.intel4coro.de/built-repo'
     }[location.protocol]
 
     function _renderBuiltRepos(data) {
       const containerDiv = document.getElementById("builtRepos")
-      if (!containerDiv) return
-      if (data.length === 0) {
+      if (!containerDiv || !data) return
+      if (data && data.length === 0) {
         containerDiv.innerHTML = '<div class="text-center">No built repos yet</div>';
         return false;
       }

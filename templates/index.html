@@ -233,7 +233,7 @@
     return urlPattern.test(str);
   }
   document.addEventListener("DOMContentLoaded", async () => {
-    const response = _requestFunc(BUILTLISTAPI, 'GET').then((response) => {
+    _requestFunc(BUILTLISTAPI, 'GET').then((response) => {
       _renderBuiltRepos(response);
     })
     await indexMain();
