@@ -241,7 +241,7 @@
       document.getElementById("submit").addEventListener("click", async (e) => {
         const url = document.getElementById("basic-url-snippet").innerText
         if (!isURL(url)) return true;
-        await postNewBuiltRepos(url);
+        _postNewBuiltRepos(url);
         return true
       })
     } catch (error) {

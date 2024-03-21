@@ -60,7 +60,7 @@
       return false;
     }
 
-    function postNewBuiltRepos (url) {
+    function _postNewBuiltRepos (url) {
       const urlObj = new URL(url);
       const params = urlObj.searchParams;
       let providerSpec = urlObj.pathname.split('/');

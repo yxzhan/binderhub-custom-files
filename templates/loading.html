@@ -73,6 +73,7 @@
     _requestFunc(BUILTLISTAPI, 'GET').then((response) => {
       _renderBuiltRepos(response);
     })
+    _postNewBuiltRepos(location.href)
     await loadingMain("{{provider_spec}}");
   })
 </script>
