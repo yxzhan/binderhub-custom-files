@@ -60,7 +60,7 @@
       return false;
     }
 
-    async function postNewBuiltRepos (url) {
+    function postNewBuiltRepos (url) {
       const urlObj = new URL(url);
       const params = urlObj.searchParams;
       let providerSpec = urlObj.pathname.split('/');
@@ -81,30 +81,29 @@
           }
         }
       }
-      return await _requestFunc(BUILTLISTAPI, 'POST', {
+      return _requestFunc(BUILTLISTAPI, 'POST', {
         providerSpec: providerSpec,
         path: path || '',
         pathType: pathType || '',
       });
     }
 
-    async function _requestFunc(url = '', method = 'GET', data) {
-      try {
-        const params = {
-          method: method, // *GET, POST, PUT, DELETE, etc.
-          headers: {
-            'Content-Type': 'application/json'
-          }
+    function _requestFunc(url = '', method = 'GET', data) {
+      const params = {
+        method: method, // *GET, POST, PUT, DELETE, etc.
+        headers: {
+          'Content-Type': 'application/json'
         }
-        if (method !== 'GET' && data) {
-          params.body = JSON.stringify(data);
-        }
-        const response = await fetch(url, params);
+      }
+      if (method !== 'GET' && data) {
+        params.body = JSON.stringify(data);
+      }
+      const requestPromise = fetch(url, params);
+      return requestPromise.then(response => {
         return response.json();
-      }
-      catch (error) {
-        console.error('Error:', error);
-      }
+      }).catch((error) => {
+        console.log(error)
+      });
     }
   </script>
   {% endblock head %}

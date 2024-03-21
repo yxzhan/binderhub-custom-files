@@ -70,18 +70,10 @@
 {% block footer %}
 <script type="text/javascript">
   document.addEventListener("DOMContentLoaded", async () => {
+    const response = _requestFunc(BUILTLISTAPI, 'GET').then((response) => {
+      _renderBuiltRepos(response);
+    })
     await loadingMain("{{provider_spec}}");
-  })
-  document.addEventListener("DOMContentLoaded", async () => {
-    // get built repos
-    try {
-      const response = await _requestFunc(BUILTLISTAPI, 'GET');
-      _renderBuiltRepos(response.filter(v => v.id !== "{{provider_spec}}"));
-      // post a new built repo
-      await postNewBuiltRepos(location.href)
-    } catch (error) {
-      console.error('Error:', error);
-    }
   })
 </script>
 {% endblock footer %}

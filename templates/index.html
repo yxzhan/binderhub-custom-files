@@ -233,14 +233,9 @@
     return urlPattern.test(str);
   }
   document.addEventListener("DOMContentLoaded", async () => {
-    try {
-      const response = await _requestFunc(BUILTLISTAPI, 'GET');
+    const response = _requestFunc(BUILTLISTAPI, 'GET').then((response) => {
       _renderBuiltRepos(response);
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  })
-  document.addEventListener("DOMContentLoaded", async () => {
+    })
     await indexMain();
     try {
       document.getElementById("submit").addEventListener("click", async (e) => {
