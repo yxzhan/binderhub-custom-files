@@ -19,13 +19,13 @@ built_repo_list = load_json_to_list('./built-repo.json')
 
 # Todos: save list to exteranl storage
 def save_list_to_file():
-    # global built_repo_list
+    global built_repo_list
     current_time = time.strftime("%Y-%m-%d_%H-%M-%S")
     filename = f"./backup/built-repo_{current_time}.json"
     with open(filename, 'w') as f:
         json.dump(built_repo_list, f, indent=2)
     print(f"List saved to {filename}")
-    # built_repo_list = built_repo_list[:20]
+    built_repo_list = get_repo_list()[:50]
     
 # Function to run the save_data_to_json function periodically
 def scheduler_func():
