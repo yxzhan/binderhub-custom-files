@@ -84,7 +84,7 @@
       }
       return _requestFunc(BUILTLISTAPI, 'POST', {
         providerSpec: providerSpec,
-        path: path || '',
+        path: encodeURIComponent(path || ''),
         pathType: pathType || '',
       });
     }
