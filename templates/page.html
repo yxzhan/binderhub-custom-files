@@ -25,13 +25,15 @@
       overflow: auto;
       padding: 2rem;
     }
-    #builtRepos .jumbotron{
+
+    #builtRepos .jumbotron {
       padding: 1rem 3rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    #builtRepos .jumbotron .btn{
+
+    #builtRepos .jumbotron .btn {
       width: 130px;
     }
   </style>
@@ -61,7 +63,7 @@
       return false;
     }
 
-    function _postNewBuiltRepos (url) {
+    function _postNewBuiltRepos(url) {
       const urlObj = new URL(url);
       const params = urlObj.searchParams;
       let providerSpec = urlObj.pathname.split('/');
@@ -106,6 +108,50 @@
         console.log(error)
       });
     }
+
+    // Observer loader class "error" to see if it fail to start instance,
+    // and display nicer error messages.
+    document.addEventListener("DOMContentLoaded", () => {
+
+      function beautifyErrors() {
+        // Hide some text
+        const linkPanel = document.querySelector('#loader-links');
+        linkPanel.style.display = 'none';
+
+
+        const messagePanel = document.querySelector('#loader-text .launching');
+        const message = `
+    <div class="alert alert-warning" role="alert">
+      Our servers are currently experiencing a bit of a traffic jam due to high demand.
+      Please try refreshing the page in a few minutes. 
+      We're working on increasing capacity to provide a better experience.
+    </div>
+    <br>
+  `
+        messagePanel.innerHTML = message + messagePanel.innerHTML
+      }
+
+      // Create a MutationObserver instance
+      const loaderStatObserver = new MutationObserver((mutationsList) => {
+        // Iterate through the mutations that occurred
+        for (const mutation of mutationsList) {
+          // Check if the class attribute was modified
+          if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+            if (mutation.target.className.includes('error')) {
+              beautifyErrors();
+              break;
+            }
+          }
+        }
+      });
+
+      // Start observing the target element
+      const targetElement = document.getElementById('loader');
+      !!targetElement && loaderStatObserver.observe(targetElement, {
+        attributes: true,  // Observe changes to attributes
+        attributeFilter: ['class']  // Specifically watch the 'class' attribute
+      });
+    })
   </script>
   {% endblock head %}
 </head>
