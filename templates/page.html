@@ -114,21 +114,35 @@
     document.addEventListener("DOMContentLoaded", () => {
 
       function beautifyErrors() {
+        // Panel displaying Error mesage
+        const messagePanel = document.querySelector('#loader-text .launching');
+
         // Hide some text
         const linkPanel = document.querySelector('#loader-links');
         linkPanel.style.display = 'none';
 
-
-        const messagePanel = document.querySelector('#loader-text .launching');
-        const message = `
+        // Get raw message
+        let rawErrorMsg = document.querySelector('.xterm-rows').textContent
+        let explain = _requestFunc('https://test.intel4coro.de/error', 'POST', {
+          data: rawErrorMsg
+        }).then(res => {
+          if (res['data'].length > 0) {
+            messagePanel.innerHTML = `
+              <div class="alert alert-warning" role="alert">
+              ${res['data']}
+              </div>
+            `
+          }
+        }).catch(_ => {
+          const message = `
     <div class="alert alert-warning" role="alert">
       Our servers are currently experiencing a bit of a traffic jam due to high demand.
       Please try refreshing the page in a few minutes. 
       We're working on increasing capacity to provide a better experience.
     </div>
-    <br>
-  `
-        messagePanel.innerHTML = message + messagePanel.innerHTML
+    <br>`
+          messagePanel.innerHTML = message + messagePanel.innerHTML
+        })
       }
 
       // Create a MutationObserver instance
@@ -138,7 +152,9 @@
           // Check if the class attribute was modified
           if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
             if (mutation.target.className.includes('error')) {
-              beautifyErrors();
+              setTimeout(() => {
+                beautifyErrors();
+              }, 1000);
               break;
             }
           }
@@ -152,6 +168,44 @@
         attributeFilter: ['class']  // Specifically watch the 'class' attribute
       });
     })
+
+  </script>
+  <script>
+    let test_windows = [];
+
+    function startStress(url = '/', num = 1) {
+      for (let i = 0; i < num; i++) {
+        setTimeout(() => {
+          // Generate random positions for the window
+          let randomX = Math.floor(Math.random() * window.screen.width);
+          let randomY = Math.floor(Math.random() * window.screen.height);
+
+          // Set window size (you can adjust width and height as needed)
+          let width = 400;
+          let height = 300;
+
+          // Open the window with random position and size
+
+          let newWindow = window.open(
+            url,
+            '_blank',
+            `width=${width},height=${height},left=${randomX},top=${randomY}`
+          );
+
+          test_windows.push(newWindow); // Store the reference to each window
+        }, i * 1000);
+      }
+    }
+
+    function stopStress() {
+      for (let i = 0; i < test_windows.length; i++) {
+        if (test_windows[i] && !test_windows[i].closed) {
+          test_windows[i].close(); // Close each window
+        }
+      }
+      test_windows = []; // Clear the references after closing
+    }
+  </script>
   </script>
   {% endblock head %}
 </head>
