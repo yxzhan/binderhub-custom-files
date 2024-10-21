@@ -1,14 +1,21 @@
 services:
-  web: 
-    build:
-      context: ./
-      target: builder
+  web:
+    container_name: binder-api
+    image: flask-web:latest
+    # build:
+    #   context: ./
+      # target: builder9091
     # flask requires SIGINT to stop gracefully
     # (default stop signal from Compose is SIGTERM)
     stop_signal: SIGINT
     env_file: .env
     volumes:
       - ./:/app
-    ports:
-      - '${FLASK_PORT}:${FLASK_PORT}'
+    # ports:
+      # - '${FLASK_PORT}:${FLASK_PORT}'
       # - '127.0.0.1:${FLASK_PORT}:${FLASK_PORT}'
+
+networks:
+  default:
+    external: true
+    name: intel4coro

@@ -5,9 +5,14 @@ import time
 import os
 import json
 from flask_cors import CORS
+from ollama import Client
 
 app = Flask(__name__)
 CORS(app, origins=['*'])
+
+# init ollama client
+LLM_MODEL = 'llama3.2:3b'
+ollama_client = Client(host='ollama:11434')
 
 def load_json_to_list(filename):
     with open(filename, 'r') as f:
@@ -82,12 +87,31 @@ def update_built_list(data):
         previous_built.update(new_repo)
     return new_repo
 
-
 def find_dict_by_id(id_to_find, d_list):
     for item in d_list:
         if item['id'] == id_to_find:
             return item
     return None  # Return None if id is not found
+
+def llm_explain_error(error_msg):
+    response = ollama_client.chat(model=LLM_MODEL, messages=[
+    {
+        'role': 'tool',
+        'content': f'''
+        "Explain the following binderhub error message in a way that a non-technical person can understand, keeping it to two sentences or less:
+        {error_msg}
+        ''',
+    }])
+    return response['message']['content']
+    
+def fetch_image_tag():
+    return ''
+
+    
+@app.route('/error', methods=['POST'])
+def explain_error():
+    data = request.json
+    return jsonify({'data': llm_explain_error(data['data'])})
 
 # Endpoint to insert a string into the list
 @app.route('/built-repo', methods=['POST'])
@@ -105,8 +129,13 @@ def post_request():
 @app.route('/built-repo', methods=['GET'])
 def get_request():
     return jsonify(get_repo_list())
+    
+# @app.route('/image', methods=['GET'])
+# def get_request():
+#     data = request.json
+#     return fetch_image_tag
 
 if __name__ == '__main__':
     flask_port = os.getenv('FLASK_PORT')
     debug = os.getenv('FLASK_DEBUG')
-    app.run(debug=False,host='0.0.0.0', port=flask_port if flask_port is not None else 9091)
+    app.run(debug=True,host='0.0.0.0', port=flask_port if flask_port is not None else 9091)
