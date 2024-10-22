@@ -36,6 +36,13 @@
     #builtRepos .jumbotron .btn {
       width: 130px;
     }
+    
+    #loader-text p.launching {
+      font-size: 1.6em;
+    }
+    #loader-text p.launching {
+      font-size: 1.6em;
+    }
   </style>
   <script>
     const BUILTLISTAPI = {
@@ -109,17 +116,50 @@
       });
     }
 
+    async function showDockerHint() {
+      // Get Repo info from URL
+      const urlObj = new URL(location.href)
+      let providerSpec = urlObj.pathname.split('/')
+      providerSpec.splice(0, 2)
+      let dockerTag = ''
+      // const commitInfo = await _requestFunc(`https://api.github.com/repos/${providerSpec[1]}/${providerSpec[2]}/commits/${providerSpec[3]}`)
+      const commitInfo = {
+        sha: "0f5b3f06400f39b30cd1b20c9d84070dda11bdc2"
+      }
+      const imagesAll = await _requestFunc('https://test.intel4coro.de/image')
+      for (let repo in imagesAll) {
+        if (imagesAll[repo].includes(commitInfo.sha)){
+          dockerTag = `intel4coro/${repo}:${commitInfo.sha}`
+          let newEle= document.createElement('p');
+          newEle.classList.add('alert', 'alert-info');
+          newEle.innerHTML =`
+            If the server is unavailable, you can also run this program via 
+            <a href="https://www.docker.com/" target="_blank">Docker</a> on your PC:
+            <br>
+            <pre><code>docker run ${dockerTag}</code></pre>
+          `
+          document.querySelector('#loader-text').appendChild(newEle)
+          break
+        }
+      }
+    }
     // Observer loader class "error" to see if it fail to start instance,
     // and display nicer error messages.
     document.addEventListener("DOMContentLoaded", () => {
 
       function beautifyErrors() {
-        // Panel displaying Error mesage
-        const messagePanel = document.querySelector('#loader-text .launching');
+        // Hide link text
+        document.querySelector('#loader-links .longLaunch').style.display = 'none'
 
-        // Hide some text
-        const linkPanel = document.querySelector('#loader-links');
-        linkPanel.style.display = 'none';
+        // Panel displaying Error mesage
+        const messagePanel = document.querySelector('#loader-text .launching')
+
+        // Create a new element for response
+        let newEle= document.createElement('p');
+        newEle.classList.add('alert', 'alert-warning');
+
+        // Show hint of local running
+        showDockerHint()
 
         // Get raw message
         let rawErrorMsg = document.querySelector('.xterm-rows').textContent
@@ -127,21 +167,15 @@
           data: rawErrorMsg
         }).then(res => {
           if (res['data'].length > 0) {
-            messagePanel.innerHTML = `
-              <div class="alert alert-warning" role="alert">
-              ${res['data']}
-              </div>
-            `
+            newEle.innerHTML = res['data']
+            messagePanel.appendChild(newEle)
           }
         }).catch(_ => {
-          const message = `
-    <div class="alert alert-warning" role="alert">
-      Our servers are currently experiencing a bit of a traffic jam due to high demand.
-      Please try refreshing the page in a few minutes. 
-      We're working on increasing capacity to provide a better experience.
-    </div>
-    <br>`
-          messagePanel.innerHTML = message + messagePanel.innerHTML
+          newEle.innerHTML =`
+              Our servers are currently experiencing a bit of a traffic jam due to high demand.
+              Please try refreshing the page in a few minutes. 
+              We're working on increasing capacity to provide a better experience.
+            `
         })
       }
 
