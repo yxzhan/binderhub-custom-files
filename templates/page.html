@@ -38,7 +38,7 @@
     }
     
     #loader-text p.alert {
-      font-size: 1.6em;
+      font-size: 1.4em;
     }
   </style>
   <script>
@@ -132,8 +132,11 @@
           newEle.innerHTML =`
             If the server is unavailable, you can also run this program via 
             <a href="https://www.docker.com/" target="_blank">Docker</a> on your PC:
-            <br>
-            <pre><code>docker run ${dockerTag}</code></pre>
+            <div class="url-row">
+              <pre id="docker-command">docker run ${dockerTag}</pre>
+              <img class="icon clipboard" src="{{static_url("images/copy-icon-black.svg")}}"
+                data-clipboard-target="#docker-command" alt="Copy to clipboard">
+            </div>
           `
           document.querySelector('#loader-text').appendChild(newEle)
           break
@@ -155,9 +158,6 @@
         let newEle= document.createElement('p');
         newEle.classList.add('alert', 'alert-warning');
 
-        // Show hint of local running
-        showDockerHint()
-
         // Get raw message
         let rawErrorMsg = document.querySelector('.xterm-rows').textContent
         let explain = _requestFunc('https://test.intel4coro.de/error', 'POST', {
@@ -166,6 +166,8 @@
           if (res['data'].length > 0) {
             newEle.innerHTML = res['data']
             messagePanel.appendChild(newEle)
+            // Show hint of local running
+            showDockerHint()
           }
         }).catch(_ => {
           newEle.innerHTML =`
