@@ -11,6 +11,7 @@ app = Flask(__name__)
 CORS(app, origins=['*'])
 
 # init ollama client
+# curl http://ollama:11434/api/generate -d '{"model": "llama3.2:3b", "keep_alive": -1}'
 LLM_MODEL = 'llama3.2:3b'
 ollama_client = Client(host='ollama:11434')
 
@@ -98,13 +99,16 @@ def llm_explain_error(error_msg):
     {
         'role': 'tool',
         'content': f'''
-        "Explain the following binderhub error message in a way that a non-technical person can understand, keeping it to two sentences or less:
-        {error_msg}
+        Interpret the following error messages for non-technical users, the error message is from a public BinderHub services.
+        If it is about insufficient server resources, prompt the user to try again later.
+        Keeping the response less than three sentences.
+        Error message: 
+        "{error_msg}"
         ''',
     }])
     return response['message']['content']
     
-def fetch_image_tag():
+def fetch_image_tag(url):
     return ''
 
     
