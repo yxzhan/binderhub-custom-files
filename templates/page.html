@@ -37,10 +37,7 @@
       width: 130px;
     }
     
-    #loader-text p.launching {
-      font-size: 1.6em;
-    }
-    #loader-text p.launching {
+    #loader-text p.alert {
       font-size: 1.6em;
     }
   </style>
@@ -149,7 +146,7 @@
 
       function beautifyErrors() {
         // Hide link text
-        document.querySelector('#loader-links .longLaunch').style.display = 'none'
+        document.querySelector('#loader-links').style.display = 'none'
 
         // Panel displaying Error mesage
         const messagePanel = document.querySelector('#loader-text .launching')
