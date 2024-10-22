@@ -36,9 +36,20 @@
     #builtRepos .jumbotron .btn {
       width: 130px;
     }
+
+    #builtRepos .jumbotron  {
+      max-width: calc(100% - 130px);
+    }
     
     #loader-text p.alert {
       font-size: 1.4em;
+    }
+    .url-row pre {
+      white-space: break-spaces;
+    }
+    img.icon.clipboard {
+      cursor: pointer;
+      max-height: none;
     }
   </style>
   <script>
@@ -119,10 +130,10 @@
       let providerSpec = urlObj.pathname.split('/')
       providerSpec.splice(0, 2)
       let dockerTag = ''
-      // const commitInfo = await _requestFunc(`https://api.github.com/repos/${providerSpec[1]}/${providerSpec[2]}/commits/${providerSpec[3]}`)
-      const commitInfo = {
-        sha: "0f5b3f06400f39b30cd1b20c9d84070dda11bdc2"
-      }
+      const commitInfo = await _requestFunc(`https://api.github.com/repos/${providerSpec[1]}/${providerSpec[2]}/commits/${providerSpec[3]}`)
+      // const commitInfo = {
+      //   sha: "0f5b3f06400f39b30cd1b20c9d84070dda11bdc2"
+      // }
       const imagesAll = await _requestFunc('https://test.intel4coro.de/image')
       for (let repo in imagesAll) {
         if (imagesAll[repo].includes(commitInfo.sha)){
@@ -176,6 +187,7 @@
               We're working on increasing capacity to provide a better experience.
             `
           messagePanel.appendChild(newEle)
+          showDockerHint()
         })
       }
 

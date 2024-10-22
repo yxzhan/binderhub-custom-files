@@ -6,6 +6,7 @@ import os
 import json
 from flask_cors import CORS
 from ollama import Client
+import requests
 
 app = Flask(__name__)
 CORS(app, origins=['*'])
@@ -22,6 +23,7 @@ def load_json_to_list(filename):
 
 # Initialize an empty list
 built_repo_list = load_json_to_list('./built-repo.json')
+built_images_file = './built-images.json'
 
 # Todos: save list to exteranl storage
 def save_list_to_file():
@@ -37,15 +39,78 @@ def save_list_to_file():
 def scheduler_func():
     while True:
         save_list_to_file()
+        fetch_all_docker_images()
         time.sleep(24 * 60 * 60)  # Sleep for 24* 60 minutes
 
 # Start the scheduler function in a separate thread
 scheduler_thread = threading.Thread(target=scheduler_func)
 scheduler_thread.daemon = True  # Daemonize the thread so it will be terminated when the main thread exits
 scheduler_thread.start()
-    
+
 def get_repo_list():
     return sorted(built_repo_list, key=lambda x:x["timestamp"], reverse=True)
+
+def fetch_all_docker_images():
+    username = 'intel4coro'
+    result = {}
+    try:
+        # Get list of repositories (Docker images)
+        repos = list_docker_images(username)
+        for repo in repos:
+            tags = list_image_tags(username, repo)
+            result[repo] = tags
+    except Exception as e:
+        return []
+    with open(built_images_file, 'w') as f:
+        json.dump(result, f, indent=2)
+    return result
+
+def list_docker_images(username):
+    """
+    List all repositories (Docker images) of a public Docker Hub account.
+    """
+    repositories = []
+    page = 1
+    while True:
+        url = f"https://hub.docker.com/v2/repositories/{username}/?page={page}"
+        response = requests.get(url)
+        if response.status_code == 200:
+            data = response.json()
+            repos = data.get('results', [])
+            repositories.extend([repo['name'] for repo in repos])
+            
+            # If there are more pages, continue, else break
+            if data.get('next') is not None:
+                page += 1
+            else:
+                break
+        else:
+            raise Exception(f"Failed to retrieve repositories: {response.status_code} {response.text}")
+    
+    return repositories
+
+def list_image_tags(username, repository):
+    """
+    List all tags of a Docker repository.
+    """
+    tags = []
+    page = 1
+    while True:
+        url = f"https://hub.docker.com/v2/repositories/{username}/{repository}/tags/?page={page}"
+        response = requests.get(url)
+        if response.status_code == 200:
+            data = response.json()
+            tags.extend([tag['name'] for tag in data.get('results', [])])
+            
+            # If there are more pages, continue, else break
+            if data.get('next') is not None:
+                page += 1
+            else:
+                break
+        else:
+            raise Exception(f"Failed to retrieve tags for {repository}: {response.status_code} {response.text}")
+    
+    return tags
 
 def update_built_list(data):
     providerSpec = data['providerSpec']
@@ -107,9 +172,6 @@ def llm_explain_error(error_msg):
         ''',
     }])
     return response['message']['content']
-    
-def fetch_image_tag(url):
-    return ''
 
     
 @app.route('/error', methods=['POST'])
@@ -134,10 +196,16 @@ def post_request():
 def get_request():
     return jsonify(get_repo_list())
     
-# @app.route('/image', methods=['GET'])
-# def get_request():
-#     data = request.json
-#     return fetch_image_tag
+@app.route('/image', methods=['GET'])
+def get_built_image():
+    try:
+        if not os.path.exists(built_images_file):
+            fetch_all_docker_images()
+        with open(built_images_file, 'r') as file:
+            data = json.load(file)
+            return data, 200
+    except Exception as e:
+        return jsonify({'error': e}), 500
 
 if __name__ == '__main__':
     flask_port = os.getenv('FLASK_PORT')
