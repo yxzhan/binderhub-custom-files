@@ -130,10 +130,8 @@
       let providerSpec = urlObj.pathname.split('/')
       providerSpec.splice(0, 2)
       let dockerTag = ''
+      // Only for github at the moment
       const commitInfo = await _requestFunc(`https://api.github.com/repos/${providerSpec[1]}/${providerSpec[2]}/commits/${providerSpec[3]}`)
-      // const commitInfo = {
-      //   sha: "0f5b3f06400f39b30cd1b20c9d84070dda11bdc2"
-      // }
       const imagesAll = await _requestFunc('https://test.intel4coro.de/image')
       for (let repo in imagesAll) {
         if (imagesAll[repo].includes(commitInfo.sha)){
@@ -144,7 +142,7 @@
             If the server is unavailable, you can also run this program via 
             <a href="https://www.docker.com/" target="_blank">Docker</a> on your PC:
             <div class="url-row">
-              <pre id="docker-command">docker run ${dockerTag}</pre>
+              <pre id="docker-command">docker run -p 8888:8888 ${dockerTag}</pre>
               <img class="icon clipboard" src="{{static_url("images/copy-icon-black.svg")}}"
                 data-clipboard-target="#docker-command" alt="Copy to clipboard">
             </div>
