@@ -149,7 +149,7 @@
         document.querySelector('#loader-links').style.display = 'none'
 
         // Panel displaying Error mesage
-        const messagePanel = document.querySelector('#loader-text .launching')
+        const messagePanel = document.querySelector('#loader-text')
 
         // Create a new element for response
         let newEle= document.createElement('p');
@@ -173,6 +173,7 @@
               Please try refreshing the page in a few minutes. 
               We're working on increasing capacity to provide a better experience.
             `
+          messagePanel.appendChild(newEle)
         })
       }
 
