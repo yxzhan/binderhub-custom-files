@@ -162,6 +162,7 @@
         let newEle= document.createElement('p');
         newEle.classList.add('alert', 'alert-info');
         newEle.innerText = "Redirecting to backup server..."
+        messagePanel.appendChild(newEle)
         setTimeout(() => {
           if (window.location.hostname === "binder.intel4coro.de") {
             // Construct the new URL by replacing the hostname and keeping the rest of the path and query parameters
@@ -173,7 +174,7 @@
             // Redirect to the new URL
             window.location.href = newUrl;
           }
-        }, 3000)
+        }, 5000)
       }
 
       function beautifyErrors() {
