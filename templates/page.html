@@ -157,6 +157,25 @@
     // and display nicer error messages.
     document.addEventListener("DOMContentLoaded", () => {
 
+      function redirect2BackupServer () {
+        const messagePanel = document.querySelector('#loader-text')
+        let newEle= document.createElement('p');
+        newEle.classList.add('alert', 'alert-info');
+        newEle.innerText = "Redirecting to backup server..."
+        setTimeout(() => {
+          if (window.location.hostname === "binder.intel4coro.de") {
+            // Construct the new URL by replacing the hostname and keeping the rest of the path and query parameters
+            const newUrl = window.location.href.replace("binder.intel4coro.de", "binder.dev.intel4coro.de");
+            // Redirect to the new URL
+            window.location.href = newUrl;
+          } else {
+            const newUrl = window.location.href.replace("binder.dev.intel4coro.de", "binder.intel4coro.de");
+            // Redirect to the new URL
+            window.location.href = newUrl;
+          }
+        }, 3000)
+      }
+
       function beautifyErrors() {
         // Hide link text
         document.querySelector('#loader-links').style.display = 'none'
@@ -178,6 +197,8 @@
             messagePanel.appendChild(newEle)
             // Show hint of local running
             showDockerHint()
+            // Show hint of redirect
+            redirect2BackupServer()
           }
         }).catch(_ => {
           newEle.innerHTML =`
