@@ -239,10 +239,13 @@
   </script>
   <script>
     let test_windows = [];
-
-    function startStress(url = '/', num = 1) {
+    function startStress(url = '/', num = 1, headless = false) {
       for (let i = 0; i < num; i++) {
         setTimeout(() => {
+          if (headless) {
+            fetch("url")
+            return true;
+          }
           // Generate random positions for the window
           let randomX = Math.floor(Math.random() * window.screen.width);
           let randomY = Math.floor(Math.random() * window.screen.height);
