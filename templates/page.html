@@ -161,10 +161,13 @@
         if (window.location.hostname !== "binder.intel4coro.de") return;
         const newUrl = window.location.href.replace("binder.intel4coro.de", "binder.dev.intel4coro.de");
         const messagePanel = document.querySelector('#loader-text')
-        let newEle= document.createElement('a');
+        const newEle = document.createElement('p');
         newEle.classList.add('alert', 'alert-info');
-        newEle.innerText = "Redirect to backup server";
-        newEle.href = newUrl;
+        newEle.innerText = "Click the link below to jump to the backup server:";
+        const  linkEle = document.createElement('a');
+        linkEle.href = newUrl;
+        linkEle.innerText = "Redirect to backup server";
+        newEle.appendChild(linkEle);
         messagePanel.appendChild(newEle)
         // setTimeout(() => { window.location.href = newUrl; }, 5000)
       }
