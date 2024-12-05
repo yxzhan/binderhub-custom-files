@@ -163,15 +163,16 @@ def llm_explain_error(error_msg):
     response = ollama_client.chat(model=LLM_MODEL, messages=[
     {
         'role': 'tool',
+        # If the error includes keywords "cpu", "memory", "pod" or empty, prompt the user to try again later. Otherwise just explain the errors.
+        
         'content': f'''
-        Interpret the following error messages for non-technical users, the error message is from a public BinderHub services.
-        If it is about insufficient server resources, prompt the user to try again later.
-        Keeping the response less than three sentences.
-        Error message: 
+        Interpret the following error messages for non-technical users, the error message is from a public BinderHub services. Prompt the user to try again later
+        Keeping the response less than 3 sentences.
+        Error message:
         "{error_msg}"
         ''',
     }])
-    return response['message']['content']
+    return response['message']['content'] 
 
     
 @app.route('/error', methods=['POST'])

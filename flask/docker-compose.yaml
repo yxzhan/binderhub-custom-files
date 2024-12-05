@@ -2,8 +2,9 @@ services:
   web:
     container_name: binder-api
     image: flask-web:latest
-    # build:
-    #   context: ./
+    restart: unless-stopped
+    build:
+      context: ./
       # target: builder9091
     # flask requires SIGINT to stop gracefully
     # (default stop signal from Compose is SIGTERM)
