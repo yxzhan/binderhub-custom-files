@@ -140,8 +140,7 @@
           let newEle= document.createElement('p');
           newEle.classList.add('alert', 'alert-info');
           newEle.innerHTML =`
-            If the server is unavailable, you can also run this program via 
-            <a href="https://www.docker.com/" target="_blank">Docker</a> on your PC:
+            Run this lab via <a href="https://www.docker.com/" target="_blank">Docker</a> on your PC:
             <div class="url-row">
               <pre id="docker-command">docker run -p 8888:8888 ${dockerTag}</pre>
               <img class="icon clipboard" src="{{static_url("images/copy-icon-black.svg")}}"
@@ -149,9 +148,10 @@
             </div>
           `
           document.querySelector('#loader-text').appendChild(newEle)
-          break
+          return dockerTag;
         }
       }
+      return undefined;
     }
     // Observer loader class "error" to see if it fail to start instance,
     // and display nicer error messages.
@@ -174,17 +174,17 @@
 
       function beautifyErrors() {
         // Hide link text
-        document.querySelector('#loader-links').style.display = 'none'
+        document.querySelector('#loader-links').style.display = 'none';
 
         // Panel displaying Error mesage
-        const messagePanel = document.querySelector('#loader-text')
+        const messagePanel = document.querySelector('#loader-text');
 
         // Create a new element for response
         let newEle= document.createElement('p');
         newEle.classList.add('alert', 'alert-warning');
 
         // Get raw message
-        let rawErrorMsg = document.querySelector('.xterm-rows').textContent
+        let rawErrorMsg = document.querySelector('.xterm-rows').textContent;
         let explain = _requestFunc('https://test.intel4coro.de/error', 'POST', {
           data: rawErrorMsg
         }).then(res => {
@@ -192,18 +192,21 @@
             newEle.innerHTML = res['data']
             messagePanel.appendChild(newEle)
             // Show hint of local running
-            showDockerHint()
+            showDockerHint();
             // Show hint of redirect
-            redirect2BackupServer()
+            // redirect2BackupServer();
           }
         }).catch(_ => {
-          newEle.innerHTML =`
+          const imgTag = showDockerHint();
+          newEle.innerHTML = imgTag ? `
+              Notice: 🛠️
               Our servers are currently experiencing a bit of a traffic jam due to high demand.
               Please try refreshing the page in a few minutes. 
-              We're working on increasing capacity to provide a better experience.
+            ` : `
+              Notice: 🛠️
+              An error occurred while building this lab. Please check the logs below for more details and troubleshoot accordingly.
             `
-          messagePanel.appendChild(newEle)
-          showDockerHint()
+          messagePanel.appendChild(newEle);
         })
       }
 
