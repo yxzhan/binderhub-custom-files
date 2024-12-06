@@ -197,8 +197,8 @@
             // redirect2BackupServer();
           }
         }).catch(_ => {
-          const imgTag = showDockerHint();
-          newEle.innerHTML = imgTag ? `
+          showDockerHint().then(imgTag => {
+            newEle.innerHTML = imgTag ? `
               Notice: 🛠️
               Our servers are currently experiencing a bit of a traffic jam due to high demand.
               Please try refreshing the page in a few minutes. 
@@ -206,7 +206,8 @@
               Notice: 🛠️
               An error occurred while building this lab. Please check the logs below for more details and troubleshoot accordingly.
             `
-          messagePanel.appendChild(newEle);
+            messagePanel.appendChild(newEle);
+          });
         })
       }
 
