@@ -14,6 +14,9 @@
   <meta property="og:image:height" content="700">
   <meta property="og:image:alt" content="The Binder Project Logo" />
   <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.css">
+
   {% endblock meta_social %}
   {% block head %}
   <link id="favicon" rel="shortcut icon" type="image/png" href="{{static_url("favicon.ico")}}" />
@@ -322,6 +325,7 @@
   {% endfor %}
   {% endif %}
   {% endblock body %}
+<script type="module" src="static/cookieconsent-config.js"></script>
 </body>
 
 </html>

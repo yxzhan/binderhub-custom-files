@@ -1,0 +1,39 @@
+{% extends "page.html" %}
+
+{% block main %}
+<div id="main" class="container">
+  <div class="row">
+    <div class="col-lg-10 col-lg-offset-1">
+      <h3>Data Privacy Statement</h3>
+      <div style="text-align: left;">
+        We take user privacy very seriously! Because Binder runs as a public, free service for robotics research, we don’t require any kind of log-in that would let us keep track of user data. All code that is run, data analyzed, papers reproduced, classes taught - in short, everything that happens in a Binder session - is destroyed when the user logs off or becomes inactive for more than 15 minutes.
+        <p class="h2">What Data We Collect</p>
+        <p>We do not collect personal data during your use of this service. However, the following technical data may be temporarily generated:
+          <ul>
+            <li>Anonymized IP addresses (in server logs, for security and troubleshooting purposes).</li>
+            <li>Session identifiers (to manage active sessions).</li>
+          </ul>
+          No personally identifiable information (PII) is intentionally collected unless explicitly provided by the user.
+        </p>
+        <p class="h2">Purpose of Data Processing</p>
+        <p>The limited data we process is used for:
+          <ul>
+            <li>Ensuring the functionality of the BinderHub service.</li>
+            <li>Diagnosing technical issues.</li>
+            <li>Detecting abuse of the service.</li>
+          </ul>
+        </p>
+        <p class="h2">Data Retention</p>
+        <p>Any temporary data (e.g., container logs, temporary files) is automatically removed when your session ends or after a predefined time. Server logs contains anonymized IP addresses will be retained a maximum of 30 days</p>
+        <p class="h2">Data Sharing</p>
+        <p>We do not use any data for marketing, profiling, or sharing with third parties.</p>
+        <p class="h2">Cookies</p>
+        <p>We use session cookies for managing your session with anonymized JupyterLabs. These cookies are automatically destroyed when user session ends. No tracking or third-party cookies are used.
+        </p>
+        <p class="h2">Your Responsibility</p>
+        <p>Avoid uploading sensitive or confidential data to this BinderHub instance. Any data shared in your Binder session is your sole responsibility. In short, you shouldn’t do anything on our BinderHub service that you wouldn’t mind sharing with the world!</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock main %}
