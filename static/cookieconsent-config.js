@@ -26,7 +26,6 @@ CookieConsent.run({
         translations: {
             en: {
                 consentModal: {
-                    title: "Hello roboticists!",
                     description: "This site uses cookies that are necessary for its operation. No tracking or optional cookies are used. For more details, please see our Privacy Policy.",
                     acceptAllBtn: "Accept",
                     acceptNecessaryBtn: "Reject",
