@@ -16,7 +16,8 @@
   <meta name="twitter:card" content="summary_large_image">
   {% endblock meta_social %}
   {% block head %}
-  <link id="favicon" rel="shortcut icon" type="image/png" href="{{static_url("favicon.ico")}}" />
+  <!-- <link id="favicon" rel="shortcut icon" type="image/png" href="{{static_url("favicon.ico")}}" /> -->
+  <link id="favicon" rel="shortcut icon" type="image/png" href="https://ai.uni-bremen.de/lib/tpl/agkitpl/images/favicon.ico" />
   <link href="{{static_url("dist/styles.css")}}" rel="stylesheet">
   </link>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.css">
@@ -294,9 +295,10 @@
   <div class="container">
     <div class="row">
       <div id="logo-container">
-        <a href="/"><img id="logo" src="{{static_url("logo.svg")}}" width="330px" alt="logo" /></a>
-        <a href="https://ai.uni-bremen.de/" target="_blank"><img id="logo-iai"
-            src="/extra_static/iai_logo.png" width="180px" alt="iai logo" /></a>
+        <a href="https://ai.uni-bremen.de/" target="_blank">
+          <img id="logo" src="https://ai.uni-bremen.de/lib/tpl/agkitpl/images/aicor_logo.jpg" style="width:100%; max-width: 400px;" alt="logo" /></a>
+        <!-- <a href="http://www.informatik.uni-bremen.de/" target="_blank"><img id="logo-uni"
+            src="https://ai.uni-bremen.de/lib/tpl/agkitpl/images/university_new.png" width="122px" alt="uni logo" /></a> -->
       </div>
     </div>
   </div>
