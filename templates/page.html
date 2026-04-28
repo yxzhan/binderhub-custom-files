@@ -16,38 +16,19 @@
   {% endblock meta_social %}
   <link id="favicon" rel="shortcut icon" type="image/png" href="https://ai.uni-bremen.de/lib/tpl/aicortpl/images/favicon.ico" />
   <link href="{{static_url("dist/styles.css")}}" rel="stylesheet"></link>
-<style>
+  <style>
     #builtRepos {
       max-height: 650px;
       overflow: auto;
       padding: 2rem;
+      width: 80%;
+      margin: auto;
     }
-
-    #builtRepos .jumbotron {
-      padding: 1rem 3rem;
+    #builtRepos > div {
+      margin-bottom: 1rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-    }
-
-    #builtRepos .jumbotron .btn {
-      width: 130px;
-    }
-
-    #builtRepos .jumbotron > a {
-      max-width: calc(100% - 130px);
-      overflow: hidden;
-    }
-    
-    #loader-text p.alert {
-      font-size: 1.4em;
-    }
-    .url-row pre {
-      white-space: break-spaces;
-    }
-    img.icon.clipboard {
-      cursor: pointer;
-      max-height: none;
     }
   </style>
 <script>
@@ -65,11 +46,14 @@
       }
       containerDiv.innerHTML += data.map(v => {
         return `
-        <div class="jumbotron">
+        <div class="bg-custom-dark p-4 pt-2 rounded-bottom">
           <a target="_blank" href="${v.repo_url}">
-            <h4>${v.repo_author}/${v.repo_name}/${v.repo_ref}</h4>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16">
+              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/>
+            </svg>
+            ${v.repo_author}/${v.repo_name}/${v.repo_ref}
           </a>
-          <a class="btn btn-submit" target="_blank" href="/v2${v.binder}">Launch</a>
+          <a class="btn btn-primary col-2" target="_blank" href="/v2${v.binder}">Launch</a>
         </div>
         `
       }).join('');
@@ -122,116 +106,15 @@
       });
     }
 
-    async function showDockerHint() {
-      // Get Repo info from URL
-      const urlObj = new URL(location.href)
-      let providerSpec = urlObj.pathname.split('/')
-      providerSpec.splice(0, 2)
-      let dockerTag = ''
-      // Only for github at the moment
-      const commitInfo = await _requestFunc(`https://api.github.com/repos/${providerSpec[1]}/${providerSpec[2]}/commits/${providerSpec[3]}`)
-      const imagesAll = await _requestFunc('https://test.intel4coro.de/image')
-      for (let repo in imagesAll) {
-        if (imagesAll[repo].includes(commitInfo.sha)){
-          dockerTag = `intel4coro/${repo}:${commitInfo.sha}`
-          let newEle= document.createElement('p');
-          newEle.classList.add('alert', 'alert-info');
-          newEle.innerHTML =`
-            Run this lab via <a href="https://www.docker.com/" target="_blank">Docker</a> on your PC:
-            <div class="url-row">
-              <pre id="docker-command">docker run -p 8888:8888 ${dockerTag}</pre>
-              <img class="icon clipboard" src="{{static_url("images/copy-icon-black.svg")}}"
-                data-clipboard-target="#docker-command" alt="Copy to clipboard">
-            </div>
-          `
-          document.querySelector('#loader-text').appendChild(newEle)
-          return dockerTag;
-        }
-      }
-      return undefined;
+  document.addEventListener("DOMContentLoaded", async () => {
+    const isLaunching = /^\/v2\//.test(path);
+    if (isLaunching) {
+      await _postNewBuiltRepos(location.href)
     }
-    // Observer loader class "error" to see if it fail to start instance,
-    // and display nicer error messages.
-    document.addEventListener("DOMContentLoaded", () => {
-
-      function redirect2BackupServer () {
-        if (window.location.hostname !== "binder.intel4coro.de") return;
-        const newUrl = window.location.href.replace("binder.intel4coro.de", "binder.dev.intel4coro.de");
-        const messagePanel = document.querySelector('#loader-text')
-        const newEle = document.createElement('p');
-        newEle.classList.add('alert', 'alert-info');
-        newEle.innerText = "If server resources are insufficient, Click:";
-        const  linkEle = document.createElement('a');
-        linkEle.href = newUrl;
-        linkEle.innerText = "Redirect to backup server";
-        newEle.appendChild(linkEle);
-        messagePanel.appendChild(newEle)
-        // setTimeout(() => { window.location.href = newUrl; }, 5000)
-      }
-
-      function beautifyErrors() {
-        // Hide link text
-        document.querySelector('#loader-links').style.display = 'none';
-
-        // Panel displaying Error mesage
-        const messagePanel = document.querySelector('#loader-text');
-
-        // Create a new element for response
-        let newEle= document.createElement('p');
-        newEle.classList.add('alert', 'alert-warning');
-
-        // Get raw message
-        let rawErrorMsg = document.querySelector('.xterm-rows').textContent;
-        let explain = _requestFunc('https://test.intel4coro.de/error', 'POST', {
-          data: rawErrorMsg
-        }).then(res => {
-          if (res['data'].length > 0) {
-            newEle.innerHTML = res['data']
-            messagePanel.appendChild(newEle)
-            // Show hint of local running
-            showDockerHint();
-            // Show hint of redirect
-            // redirect2BackupServer();
-          }
-        }).catch(_ => {
-          showDockerHint().then(imgTag => {
-            newEle.innerHTML = imgTag ? `
-              Notice: 🛠️
-              Our servers are currently experiencing a bit of a traffic jam due to high demand.
-              Please try refreshing the page in a few minutes.
-            ` : `
-              Notice: 🛠️
-              An error occurred while building this lab.
-              Please wait for the author to fix the problem and try again later.
-            `
-            messagePanel.appendChild(newEle);
-          });
-        })
-      }
-
-      // Create a MutationObserver instance
-      const loaderStatObserver = new MutationObserver((mutationsList) => {
-        // Iterate through the mutations that occurred
-        for (const mutation of mutationsList) {
-          // Check if the class attribute was modified
-          if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-            if (mutation.target.className.includes('error')) {
-              setTimeout(() => {
-                beautifyErrors();
-              }, 1000);
-              break;
-            }
-          }
-        }
-      });
-
-      // Start observing the target element
-      const targetElement = document.getElementById('loader');
-      !!targetElement && loaderStatObserver.observe(targetElement, {
-        attributes: true,  // Observe changes to attributes
-        attributeFilter: ['class']  // Specifically watch the 'class' attribute
-      });
+    _requestFunc(BUILTLISTAPI, 'GET').then((response) => {
+      _renderBuiltRepos(response);
     })
+  })
 
   </script>
   <script>
@@ -248,6 +131,8 @@
 </head>
 <body>
 <div id="root"></div>
+
+<h2 id="builtRepos">Recent Built Labs</h2>
 <div id="builtRepos"></div>
 </body>
 
