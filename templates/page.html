@@ -113,7 +113,7 @@
     }
 
   document.addEventListener("DOMContentLoaded", async () => {
-    const isLaunching = /^\/v2\//.test(path);
+    const isLaunching = /^\/v2\//.test(location.href);
     if (isLaunching) {
       await _postNewBuiltRepos(location.href)
     } else {
