@@ -113,7 +113,7 @@
     }
 
   document.addEventListener("DOMContentLoaded", async () => {
-    const isLaunching = /^\/v2\//.test(location.href);
+    const isLaunching = new URL(location.href).pathname.startsWith("/v2/");
     if (isLaunching) {
       await _postNewBuiltRepos(location.href)
     } else {
