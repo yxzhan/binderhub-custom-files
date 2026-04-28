@@ -1,3 +1,47 @@
-{% extends "templates/page.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}Binder{% endblock %}</title>
+  <title>{% block title %}AICOR Binder{% endblock %}</title>
 
-{% block logo_image %}"https://ai.uni-bremen.de/lib/tpl/aicortpl/images/aicor_logo.jpg"{% endblock logo_image %}
+  {% block meta_social %}
+  {# Social media previews #}
+  <meta property="og:title" content="{{opengraph_title}}">
+  <meta property="og:image" content="{{static_url("images/logo_social.png")}}">
+  <meta property="og:description" content="Reproducible, sharable, open, interactive computing environments.">
+  <meta property="og:image:width" content="1334">
+  <meta property="og:image:height" content="700">
+  <meta property="og:image:alt" content="The Binder Project Logo" />
+  <meta name="twitter:card" content="summary_large_image">
+  {% endblock meta_social %}
+  <link id="favicon" rel="shortcut icon" type="image/png" href="https://ai.uni-bremen.de/lib/tpl/aicortpl/images/favicon.ico" />
+  <link href="{{static_url("dist/styles.css")}}" rel="stylesheet"></link>
+
+  <script>
+    window.pageConfig = {{page_config|tojson}};
+    window.pageConfig.logoUrl = "https://ai.uni-bremen.de/lib/tpl/aicortpl/images/aicor_logo.jpg";
+  </script>
+  {%- block extra_header %}
+  {%- if extra_header_html %}
+  {%- for _, snippet in extra_header_html | dictsort %}
+  {{ snippet | trim | safe }}
+  {%- endfor %}
+  {%- endif %}
+  {%- endblock extra_header %}
+</head>
+<body>
+<div id="root"></div>
+</body>
+
+<script src="{{static_url("dist/bundle.js")}}"></script>
+
+{% if extra_footer_scripts %}
+{% for script in extra_footer_scripts|dictsort %}
+<script>
+  {{ script[1]|safe }}
+</script>
+{% endfor %}
+{% endif %}
+
+</html>
