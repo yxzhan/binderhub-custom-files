@@ -25,11 +25,16 @@
       margin: auto;
     }
     #builtRepos > div {
-      margin-bottom: 1rem;
+      margin-top: 1rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-size: 1.5rem;
+    }
+    #builtRepos > div > a:first-child {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
   </style>
 <script>
@@ -134,8 +139,8 @@
 <body>
 <div id="root"></div>
 
-<h2>Recent Built Labs</h2>
-<div id="builtRepos"></div>
+<h2 class="text-center mt-4">Recent Built Labs</h2>
+<div id="builtRepos" class="col-10"></div>
 </body>
 
 <script src="{{static_url("dist/bundle.js")}}"></script>
