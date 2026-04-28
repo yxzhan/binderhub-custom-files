@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>{% block title %}Binder{% endblock %}</title>
   <title>{% block title %}AICOR Binder{% endblock %}</title>
 
   {% block meta_social %}
@@ -17,7 +16,224 @@
   {% endblock meta_social %}
   <link id="favicon" rel="shortcut icon" type="image/png" href="https://ai.uni-bremen.de/lib/tpl/aicortpl/images/favicon.ico" />
   <link href="{{static_url("dist/styles.css")}}" rel="stylesheet"></link>
+<style>
+    #builtRepos {
+      max-height: 650px;
+      overflow: auto;
+      padding: 2rem;
+    }
 
+    #builtRepos .jumbotron {
+      padding: 1rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #builtRepos .jumbotron .btn {
+      width: 130px;
+    }
+
+    #builtRepos .jumbotron > a {
+      max-width: calc(100% - 130px);
+      overflow: hidden;
+    }
+    
+    #loader-text p.alert {
+      font-size: 1.4em;
+    }
+    .url-row pre {
+      white-space: break-spaces;
+    }
+    img.icon.clipboard {
+      cursor: pointer;
+      max-height: none;
+    }
+  </style>
+<script>
+    const BUILTLISTAPI = {
+      'http:': 'http://192.168.102.13:9091/built-repo',
+      'https:': 'https://test.intel4coro.de/built-repo'
+    }[location.protocol]
+
+    function _renderBuiltRepos(data) {
+      const containerDiv = document.getElementById("builtRepos")
+      if (!containerDiv || !data) return
+      if (data && data.length === 0) {
+        containerDiv.innerHTML = '<div class="text-center">No built repos yet</div>';
+        return false;
+      }
+      containerDiv.innerHTML += data.map(v => {
+        return `
+        <div class="jumbotron">
+          <a target="_blank" href="${v.repo_url}">
+            <h4>${v.repo_author}/${v.repo_name}/${v.repo_ref}</h4>
+          </a>
+          <a class="btn btn-submit" target="_blank" href="/v2${v.binder}">Launch</a>
+        </div>
+        `
+      }).join('');
+      return false;
+    }
+
+    function _postNewBuiltRepos(url) {
+      const urlObj = new URL(url);
+      const params = urlObj.searchParams;
+      let providerSpec = urlObj.pathname.split('/');
+      providerSpec.splice(0, 2);
+      providerSpec = providerSpec.join('/');
+      let pathType, path;
+      path = params.get("urlpath");
+      if (path) {
+        pathType = "url";
+      } else {
+        path = params.get("labpath");
+        if (path) {
+          pathType = "lab";
+        } else {
+          path = params.get("filepath");
+          if (path) {
+            pathType = "file";
+          }
+        }
+      }
+      return _requestFunc(BUILTLISTAPI, 'POST', {
+        providerSpec: providerSpec,
+        path: encodeURIComponent(path || ''),
+        pathType: pathType || '',
+      });
+    }
+
+    function _requestFunc(url = '', method = 'GET', data) {
+      const params = {
+        method: method, // *GET, POST, PUT, DELETE, etc.
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+      if (method !== 'GET' && data) {
+        params.body = JSON.stringify(data);
+      }
+      const requestPromise = fetch(url, params);
+      return requestPromise.then(response => {
+        return response.json();
+      }).catch((error) => {
+        console.log(error)
+      });
+    }
+
+    async function showDockerHint() {
+      // Get Repo info from URL
+      const urlObj = new URL(location.href)
+      let providerSpec = urlObj.pathname.split('/')
+      providerSpec.splice(0, 2)
+      let dockerTag = ''
+      // Only for github at the moment
+      const commitInfo = await _requestFunc(`https://api.github.com/repos/${providerSpec[1]}/${providerSpec[2]}/commits/${providerSpec[3]}`)
+      const imagesAll = await _requestFunc('https://test.intel4coro.de/image')
+      for (let repo in imagesAll) {
+        if (imagesAll[repo].includes(commitInfo.sha)){
+          dockerTag = `intel4coro/${repo}:${commitInfo.sha}`
+          let newEle= document.createElement('p');
+          newEle.classList.add('alert', 'alert-info');
+          newEle.innerHTML =`
+            Run this lab via <a href="https://www.docker.com/" target="_blank">Docker</a> on your PC:
+            <div class="url-row">
+              <pre id="docker-command">docker run -p 8888:8888 ${dockerTag}</pre>
+              <img class="icon clipboard" src="{{static_url("images/copy-icon-black.svg")}}"
+                data-clipboard-target="#docker-command" alt="Copy to clipboard">
+            </div>
+          `
+          document.querySelector('#loader-text').appendChild(newEle)
+          return dockerTag;
+        }
+      }
+      return undefined;
+    }
+    // Observer loader class "error" to see if it fail to start instance,
+    // and display nicer error messages.
+    document.addEventListener("DOMContentLoaded", () => {
+
+      function redirect2BackupServer () {
+        if (window.location.hostname !== "binder.intel4coro.de") return;
+        const newUrl = window.location.href.replace("binder.intel4coro.de", "binder.dev.intel4coro.de");
+        const messagePanel = document.querySelector('#loader-text')
+        const newEle = document.createElement('p');
+        newEle.classList.add('alert', 'alert-info');
+        newEle.innerText = "If server resources are insufficient, Click:";
+        const  linkEle = document.createElement('a');
+        linkEle.href = newUrl;
+        linkEle.innerText = "Redirect to backup server";
+        newEle.appendChild(linkEle);
+        messagePanel.appendChild(newEle)
+        // setTimeout(() => { window.location.href = newUrl; }, 5000)
+      }
+
+      function beautifyErrors() {
+        // Hide link text
+        document.querySelector('#loader-links').style.display = 'none';
+
+        // Panel displaying Error mesage
+        const messagePanel = document.querySelector('#loader-text');
+
+        // Create a new element for response
+        let newEle= document.createElement('p');
+        newEle.classList.add('alert', 'alert-warning');
+
+        // Get raw message
+        let rawErrorMsg = document.querySelector('.xterm-rows').textContent;
+        let explain = _requestFunc('https://test.intel4coro.de/error', 'POST', {
+          data: rawErrorMsg
+        }).then(res => {
+          if (res['data'].length > 0) {
+            newEle.innerHTML = res['data']
+            messagePanel.appendChild(newEle)
+            // Show hint of local running
+            showDockerHint();
+            // Show hint of redirect
+            // redirect2BackupServer();
+          }
+        }).catch(_ => {
+          showDockerHint().then(imgTag => {
+            newEle.innerHTML = imgTag ? `
+              Notice: 🛠️
+              Our servers are currently experiencing a bit of a traffic jam due to high demand.
+              Please try refreshing the page in a few minutes.
+            ` : `
+              Notice: 🛠️
+              An error occurred while building this lab.
+              Please wait for the author to fix the problem and try again later.
+            `
+            messagePanel.appendChild(newEle);
+          });
+        })
+      }
+
+      // Create a MutationObserver instance
+      const loaderStatObserver = new MutationObserver((mutationsList) => {
+        // Iterate through the mutations that occurred
+        for (const mutation of mutationsList) {
+          // Check if the class attribute was modified
+          if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+            if (mutation.target.className.includes('error')) {
+              setTimeout(() => {
+                beautifyErrors();
+              }, 1000);
+              break;
+            }
+          }
+        }
+      });
+
+      // Start observing the target element
+      const targetElement = document.getElementById('loader');
+      !!targetElement && loaderStatObserver.observe(targetElement, {
+        attributes: true,  // Observe changes to attributes
+        attributeFilter: ['class']  // Specifically watch the 'class' attribute
+      });
+    })
+
+  </script>
   <script>
     window.pageConfig = {{page_config|tojson}};
     window.pageConfig.logoUrl = "https://ai.uni-bremen.de/lib/tpl/aicortpl/images/aicor_logo.jpg";
@@ -32,6 +248,7 @@
 </head>
 <body>
 <div id="root"></div>
+<div id="builtRepos"></div>
 </body>
 
 <script src="{{static_url("dist/bundle.js")}}"></script>
