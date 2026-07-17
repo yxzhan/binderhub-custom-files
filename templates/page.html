@@ -152,5 +152,43 @@
 </script>
 {% endfor %}
 {% endif %}
+  <script>
+    let test_windows = [];
+    function startStress(url = '/', num = 1, headless = false) {
+      for (let i = 0; i < num; i++) {
+        setTimeout(() => {
+          if (headless) {
+            fetch(url)
+            return true;
+          }
+          // Generate random positions for the window
+          let randomX = Math.floor(Math.random() * window.screen.width);
+          let randomY = Math.floor(Math.random() * window.screen.height);
 
+          // Set window size (you can adjust width and height as needed)
+          let width = 400;
+          let height = 300;
+
+          // Open the window with random position and size
+
+          let newWindow = window.open(
+            url,
+            '_blank',
+            `width=${width},height=${height},left=${randomX},top=${randomY}`
+          );
+
+          test_windows.push(newWindow); // Store the reference to each window
+        }, i * 1000);
+      }
+    }
+
+    function stopStress() {
+      for (let i = 0; i < test_windows.length; i++) {
+        if (test_windows[i] && !test_windows[i].closed) {
+          test_windows[i].close(); // Close each window
+        }
+      }
+      test_windows = []; // Clear the references after closing
+    }
+  </script>
 </html>
